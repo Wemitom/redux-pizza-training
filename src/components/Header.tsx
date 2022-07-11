@@ -1,7 +1,21 @@
+import { useState } from 'react';
 import { Navbar, Nav, Form, FormControl, Container } from 'react-bootstrap';
-import { AiOutlineArrowRight, AiOutlineShoppingCart } from 'react-icons/ai';
+import {
+  AiOutlineArrowRight,
+  AiOutlineShoppingCart,
+  AiOutlineUp,
+} from 'react-icons/ai';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import ShoppingCart from './ShoppingCart';
 
 function Header() {
+  const [cartOpened, setCartOpened] = useState(false);
+
+  const shoppingCart = useSelector(
+    (state: RootState) => state.shoppingCart.items
+  );
+
   return (
     <Navbar variant="dark" className="header" expand="lg" sticky="top">
       <Container>
@@ -25,25 +39,38 @@ function Header() {
               />
               <button
                 className="circle-btn"
-                style={{ position: 'absolute' }}
+                style={{ position: 'absolute', right: '-2px' }}
                 onClick={(e) => e.preventDefault}
               >
                 <AiOutlineArrowRight />
               </button>
             </Form>
           </div>
-          <div>
+          <div style={{ position: 'relative' }}>
             <button
               className="circle-btn"
               style={{
-                backgroundColor: '#e31836',
+                backgroundColor: !cartOpened ? '#e31836' : '#fff',
                 marginLeft: '15px',
                 position: 'relative',
+                height: !cartOpened ? '48px' : '60px',
+                borderRadius: '24px',
               }}
+              onClick={() => setCartOpened(!cartOpened)}
             >
-              <AiOutlineShoppingCart />
-              <div className="items-number">0</div>
+              {!cartOpened ? (
+                <AiOutlineShoppingCart />
+              ) : (
+                <AiOutlineUp color="#e31836" />
+              )}
+              <div
+                className="items-number"
+                style={{ display: cartOpened ? 'none' : 'block' }}
+              >
+                {shoppingCart?.length || 0}
+              </div>
             </button>
+            <ShoppingCart cartOpened={cartOpened} />
           </div>
         </Navbar.Collapse>
       </Container>
